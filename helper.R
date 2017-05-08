@@ -5,7 +5,10 @@ rm('p','pkgs')
 
 
 # read in poster names from file
-posters <- read.csv("poster_list.csv", header=TRUE)
+## CHANGE THIS LINE OF CODE
+## posters <- read.csv("~//poster_list.csv", header=TRUE)
+posters <- read.csv("~/CNSApp/poster_list.csv", header=TRUE)
+
 names(posters) <- c("ID","author","title")
 
 posters.df <- separate(posters, col = "ID", 
@@ -132,7 +135,7 @@ plotData <- function(category){
     if(exists("GSM")){
       return(GSM %>% 
                group_by("ID" = paste(Category,ID,sep="")) %>% 
-               count(sort = TRUE) %>% 
+               tally() %>% 
                data.frame() %>% head(n = 5) %>%
                
                ggplot(aes(x = reorder(ID,desc(n)), y = n, fill = ID)) + 
@@ -166,19 +169,19 @@ plotData <- function(category){
     }
   }
 }
-
+library(dplyr)
 plotlyData <- function(category){
   if(category == "GSM"){
     if(exists("GSM") & exists("posters.df")){
       suppressMessages(
         suppressWarnings(
           df <- GSM %>% 
-            group_by("NAME" = factor(paste(Category,ID,sep=""))) %>%
-            count(sort = TRUE) %>% 
-            ungroup() %>%
-            separate(col = "NAME", into = c("Category","ID"),
-              sep = "(?<=[A-Z]) ?(?=[0-9])", remove = FALSE) %>%
-            data.frame() %>% head(n = 5) %>% left_join(posters.df)
+                  group_by("NAME" = factor(paste(Category,ID,sep=""))) %>%
+                  tally() %>% 
+                  ungroup() %>%
+                  separate(col = "NAME", into = c("Category","ID"),
+                               sep = "(?<=[A-Z]) ?(?=[0-9])", remove = FALSE) %>%
+                  data.frame() %>% head(n = 5) %>% left_join(posters.df)
         )
       )
       gg <- df %>% 
