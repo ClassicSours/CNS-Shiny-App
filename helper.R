@@ -6,12 +6,12 @@ rm('p','pkgs')
 
 # read in poster names from file
 ## CHANGE THIS LINE OF CODE
-## posters <- read.csv("~//poster_list.csv", header=TRUE)
+## posters <<- read.csv("~//poster_list.csv", header=TRUE)
 posters <- read.csv("~/CNSApp/poster_list.csv", header=TRUE)
 
 names(posters) <- c("ID","author","title")
 
-posters.df <- separate(posters, col = "ID", 
+posters.df <<- separate(posters, col = "ID", 
                        into = c("Category","ID"),
                        sep = "(?<=[A-Z]) ?(?=[0-9])") %>%
               mutate(Category = factor(Category), ID = factor(ID))
@@ -22,16 +22,18 @@ posters.df <- separate(posters, col = "ID",
 
 fields <- c("Category","ID","JudgeID","total","best")
 
-files <- list.files()
-csv.pattern <- ".+(\\.csv)$"
-csv.files <- grep(csv.pattern,files,value = TRUE)
+## This was the issue with the poster info now it should use poster_list.csv
 
-if(length(csv.files) != 0){
-  posters.csv <- grep("posterinfo",csv.files, value = TRUE)
-  poster.in <- read.csv(posters.csv)
-  poster.in$ID <- factor(poster.in$ID)
-  posters.df <<- poster.in
-}
+# files <- list.files()
+# csv.pattern <- ".+(\\.csv)$"
+# csv.files <- grep(csv.pattern,files,value = TRUE)
+
+# if(length(csv.files) != 0){
+#   posters.csv <- grep("posterinfo",csv.files, value = TRUE)
+#   poster.in <- read.csv(posters.csv)
+#   poster.in$ID <- factor(poster.in$ID)
+#   posters.df <<- poster.in
+# }
 
 
 posterInfo <- function(poster){
