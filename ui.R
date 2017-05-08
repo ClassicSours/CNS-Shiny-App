@@ -2,7 +2,7 @@
 suppressMessages(library(plotly))
 
 shinyUI(fluidPage(
-  titlePanel("Shiny Judgeing App"),
+  titlePanel("Shiny Judging App"),
     sidebarLayout(position = "left",
     sidebarPanel(
       tabsetPanel(
@@ -56,12 +56,13 @@ shinyUI(fluidPage(
                  plotOutput("plotG")
                ),
                column(4,
-                 h3("Under Graduate Posters", align = "center"),
+                 h3("Undergraduate Posters", align = "center"),
                  plotOutput("plotU")
                ),
                column(4,
                  h3("Student Posters", align = "center"),
                  plotOutput("plotS")
+                 #plotlyOutput("plotlyS")
                )
              )
            ),
@@ -79,8 +80,6 @@ shinyUI(fluidPage(
                  plotlyOutput("plotlyPEPC")
                ),
                column(4,
-                 fileInput('file1', 'Upload Poster Info',accept=c('.xlsx')),
-                 hr(),
                  downloadButton('judgeResponses', 'Download Judge Scoring'),
                  br(),
                  br(),
@@ -111,10 +110,6 @@ shinyUI(fluidPage(
         tabPanel("People's Choice",
                  h1("People's Choice Awards"),
                  uiOutput("winersPep")
-        ),
-        tabPanel("Gatewway Sciences Museum Reccomendation",
-                 h1("Top recommended posters"),
-                 uiOutput("winnersGSM")
         )
       )
     )

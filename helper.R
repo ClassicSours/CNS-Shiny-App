@@ -1,11 +1,25 @@
-pkgs <-c('shiny','dplyr','ggplot2','stringr','tidyr','xlsx','plotly')
+pkgs <-c('shiny','dplyr','ggplot2','stringr','tidyr','plotly')
 for(p in pkgs) if(p %in% rownames(installed.packages()) == FALSE) {install.packages(p)}
 for(p in pkgs) suppressPackageStartupMessages(library(p, quietly=TRUE, character.only=TRUE))
 rm('p','pkgs')
 
+
+# read in poster names from file
+posters <- read.csv("poster_list.csv", header=TRUE)
+names(posters) <- c("ID","author","title")
+
+posters.df <- separate(posters, col = "ID", 
+                       into = c("Category","ID"),
+                       sep = "(?<=[A-Z]) ?(?=[0-9])") %>%
+              mutate(Category = factor(Category), ID = factor(ID))
+
+ # print(posters.df)
+ # savePosterInfo(posters.df)
+
+
 fields <- c("Category","ID","JudgeID","total","best")
 
-files <- list.files("~/CNSApp")
+files <- list.files()
 csv.pattern <- ".+(\\.csv)$"
 csv.files <- grep(csv.pattern,files,value = TRUE)
 
@@ -57,13 +71,13 @@ savePeoplesChoice <- function(votes) {
 }
 
 savePosterInfo <- function(posters){
-  files <- list.files("~/CNSApp")
+  files <- list.files()
   print(files)
   csv.pattern <- ".+(\\.csv)$"
   posters.csv <- grep("posterinfo",csv.files, value = TRUE)
   if(length(posters.csv) == 0){
     posters.df <<- posters
-    write.csv(posters.df, "~/CNSApp/posterinfo.csv", row.names = FALSE)
+    write.csv(posters.df, "posterinfo.csv", row.names = FALSE)
     return(TRUE)
   }
   
@@ -75,7 +89,7 @@ savePosterInfo <- function(posters){
     return(TRUE)
   }
   else{
-    write.csv(posters.df, "~/CNSApp/posterinfo.csv", row.names = FALSE)
+    write.csv(posters.df, "posterinfo.csv", row.names = FALSE)
     return(TRUE)
   }
 }
