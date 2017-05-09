@@ -6,7 +6,6 @@ shinyServer(function(input, output, session) {
   observeEvent(input$submitvote, {
     info <- posterInfo(input$posterid)
     if(info[1] != "" & info[2] != ""){
-      # print(info)
       if(!is.na(input$total)){
         vote <- data.frame(as.character(info[1]),
                            as.character(info[2]),

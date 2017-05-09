@@ -74,7 +74,8 @@ plotData <- function(category){
       if(length(which(responses[,"Category"] == category)) == 0) {
         return(NULL)
       }
-      return(responses %>% 
+      return(
+        responses %>% 
                filter(Category == category) %>% 
                group_by(ID) %>% mutate(score = sum(total,best)) %>%
                arrange(desc(score)) %>% head(n=5) %>%  
@@ -86,7 +87,7 @@ plotData <- function(category){
                      axis.ticks = element_blank(), 
                      panel.background = element_blank()) +
                labs(x = "Poster ID", y = "Total Score")
-             )
+      )
     }  
   }
   if(category == "GSM"){
@@ -127,7 +128,6 @@ plotData <- function(category){
     }
   }
 }
-library(dplyr)
 plotlyData <- function(category){
   if(category == "GSM"){
     if(exists("GSM") & exists("posters.df")){

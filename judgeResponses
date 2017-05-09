@@ -1,6 +1,7 @@
 "Category","ID","JudgeID","total","best"
 "GF","1","bob",1,0
-"GF","22","bob",2,0
-"GF","4","bob",4,0
-"GF","5","bob",5,0
-"GF","6","bob",6,0
+"GF","1","bob",1,0
+"GF","1","bob",1,0
+"GF","2","bob",8,0
+"GF","2","bob",10,0
+"GF","1","bob",12,0
