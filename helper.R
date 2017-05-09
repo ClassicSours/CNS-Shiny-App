@@ -1,4 +1,4 @@
-pkgs <-c('shiny','ggplot2','stringr','tidyr','plotly')
+pkgs <-c('shiny','ggplot2','stringr','tidyr','plotly','dplyr')
 for(p in pkgs) if(p %in% rownames(installed.packages()) == FALSE) {install.packages(p)}
 for(p in pkgs) suppressPackageStartupMessages(library(p, quietly=TRUE, character.only=TRUE))
 rm('p','pkgs')
@@ -154,6 +154,9 @@ plotlyData <- function(category){
                   left_join(posters.df)
         )
       )
+      if(nrow(df) == 0){
+        return(ggplotly(ggplot() + geom_blank() + theme_void()))
+      }
       gg <- ggplot(df, aes(x = reorder(paste(Category,ID,sep=""),desc(score)), 
                        y = score, 
                        fill = ID,
