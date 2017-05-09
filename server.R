@@ -5,8 +5,9 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$submitvote, {
     info <- posterInfo(input$posterid)
+    req(input$total)
     if(info[1] != "" & info[2] != ""){
-      if(!is.na(input$total)){
+      # if(length(input$total) == 1){
         vote <- data.frame(as.character(info[1]),
                            as.character(info[2]),
                            as.character(input$judgeid),
@@ -16,7 +17,8 @@ shinyServer(function(input, output, session) {
         if(vote$total > 12)
           vote$total <- 0
         saveData(vote)  
-      }
+        
+      # }
     }
     updateTextInput(session, "posterid", value = "")
     updateNumericInput(session, "total", value = "")
