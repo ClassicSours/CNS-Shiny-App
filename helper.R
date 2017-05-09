@@ -1,4 +1,4 @@
-pkgs <-c('shiny','dplyr','ggplot2','stringr','tidyr','plotly')
+pkgs <-c('shiny','ggplot2','stringr','tidyr','plotly')
 for(p in pkgs) if(p %in% rownames(installed.packages()) == FALSE) {install.packages(p)}
 for(p in pkgs) suppressPackageStartupMessages(library(p, quietly=TRUE, character.only=TRUE))
 rm('p','pkgs')
@@ -68,67 +68,114 @@ getpalette <- function
   return("Set3")
 }
 
-plotData <- function(category){
+## All plotlynow
+# plotData <- function(category){
+#   if(category == "GF" | category == "S" | category == "UF"){
+#     if(exists("responses")){
+#       if(length(which(responses[,"Category"] == category)) == 0) {
+#         return(NULL)
+#       }
+#       return(
+#         responses %>% 
+#           filter(Category == category) %>% 
+#           select(Category, ID, total, best) %>%
+#           group_by(ID) %>%
+#           mutate(score = sum(total,best)) %>%
+#           select(Category, ID, score) %>%
+#           unique() %>%
+#           arrange(desc(score)) %>% head(n=5) %>%  
+#           
+#           ggplot(aes(x = reorder(paste(Category,ID,sep=""),desc(score)), y = score, fill = ID)) +
+#             scale_fill_brewer(palette = paste(getpalette(category))) +
+#             geom_bar(stat="identity") +
+#             geom_text(aes(label = score), vjust = 0) + 
+#             theme(legend.position = "none", 
+#                axis.ticks = element_blank(), 
+#                panel.background = element_blank()) +
+#             labs(x = "Poster ID", y = "Total Score")
+#       )
+#     }  
+#   }
+#   if(category == "GSM"){
+#     if(exists("GSM")){
+#       return(GSM %>% 
+#                group_by("ID" = paste(Category,ID,sep="")) %>% 
+#                tally() %>% 
+#                data.frame() %>% head(n = 5) %>%
+#                
+#                ggplot(aes(x = reorder(ID,desc(n)), y = n, fill = ID)) + 
+#                scale_fill_brewer(palette = paste(getpalette("GSM"))) +
+#                geom_bar(stat="identity") + 
+#                geom_text(aes(label = n), vjust = 0) +
+#                theme(legend.position = "none",
+#                      axis.ticks = element_blank(),
+#                      panel.background = element_blank()) +
+#                labs(x = "Poster ID", y = "Total Votes"))
+#     }   
+#   }
+#   if(category == "PEOPLESCHOICE"){
+#     if(exists("PEOPLESCHOICE")){
+#       return(PEOPLESCHOICE %>% 
+#                group_by(Category, "ID" = paste(Category,ID,sep="")) %>% 
+#                tally() %>% 
+#                top_n(n=2) %>%
+#                
+#                ggplot(aes(x = reorder(ID,desc(n)), y = n, 
+#                           fill = 
+#                             c("1","2","3")[as.numeric(Category)])) +
+#                scale_fill_manual(values = c("red","blue","green")) +
+#                geom_bar(stat="identity") + 
+#                geom_text(aes(label = n), vjust = 0) +
+#                theme(legend.position = "none",
+#                      axis.ticks = element_blank(),
+#                      panel.background = element_blank()) +
+#                labs(x = "Poster ID", y = "Total Votes")
+#              )
+#     }
+#   }
+# }
+
+plotlyData <- function(category){
   if(category == "GF" | category == "S" | category == "UF"){
     if(exists("responses")){
       if(length(which(responses[,"Category"] == category)) == 0) {
         return(NULL)
       }
-      return(
-        responses %>% 
-               filter(Category == category) %>% 
-               group_by(ID) %>% mutate(score = sum(total,best)) %>%
-               arrange(desc(score)) %>% head(n=5) %>%  
-               ggplot(aes(x = reorder(paste(Category,ID,sep=""),desc(score)), y = score, fill = ID)) +
-               scale_fill_brewer(palette = paste(getpalette(category))) +
-               geom_bar(stat="identity") +
-               geom_text(aes(label = score), vjust = 0) + 
-               theme(legend.position = "none", 
-                     axis.ticks = element_blank(), 
-                     panel.background = element_blank()) +
-               labs(x = "Poster ID", y = "Total Score")
+      suppressMessages(
+        suppressWarnings(
+          df <- responses %>% 
+                  filter(Category == category) %>% 
+                  select(Category, ID, total, best) %>%
+                  group_by(ID) %>%
+                  mutate(score = sum(total,best)) %>%
+                  select(Category, ID, score) %>%
+                  unique() %>%
+                  arrange(desc(score)) %>% head(n=5) %>%
+                  left_join(posters.df)
+        )
       )
+      gg <- ggplot(df, aes(x = reorder(paste(Category,ID,sep=""),desc(score)), 
+                       y = score, 
+                       fill = ID,
+                       "poster.author" = author,
+                       "poster.title" = title)) +
+              scale_fill_brewer(palette = paste(getpalette(category))) +
+              geom_bar(stat="identity") +
+              geom_text(aes(label = score), vjust = 0) + 
+              theme(legend.position = "none", 
+                axis.ticks = element_blank(), 
+                panel.background = element_blank()) +
+              labs(x = "Poster ID", y = "Total Score")
+      
+      ply.gg <- ggplotly(gg, tooltip = c("poster.author","poster.title"))
+      
+      for (i in 1:length(ply.gg$x$data)){
+        ply.gg$x$data[[i]]$text <- c(ply.gg$x$data[[i]]$text, "") 
+      }
+      
+      return(ply.gg)
     }  
   }
-  if(category == "GSM"){
-    if(exists("GSM")){
-      return(GSM %>% 
-               group_by("ID" = paste(Category,ID,sep="")) %>% 
-               tally() %>% 
-               data.frame() %>% head(n = 5) %>%
-               
-               ggplot(aes(x = reorder(ID,desc(n)), y = n, fill = ID)) + 
-               scale_fill_brewer(palette = paste(getpalette("GSM"))) +
-               geom_bar(stat="identity") + 
-               geom_text(aes(label = n), vjust = 0) +
-               theme(legend.position = "none",
-                     axis.ticks = element_blank(),
-                     panel.background = element_blank()) +
-               labs(x = "Poster ID", y = "Total Votes"))
-    }   
-  }
-  if(category == "PEOPLESCHOICE"){
-    if(exists("PEOPLESCHOICE")){
-      return(PEOPLESCHOICE %>% 
-               group_by(Category, "ID" = paste(Category,ID,sep="")) %>% 
-               tally() %>% 
-               top_n(n=2) %>%
-               
-               ggplot(aes(x = reorder(ID,desc(n)), y = n, 
-                          fill = 
-                            c("1","2","3")[as.numeric(Category)])) +
-               scale_fill_manual(values = c("red","blue","green")) +
-               geom_bar(stat="identity") + 
-               geom_text(aes(label = n), vjust = 0) +
-               theme(legend.position = "none",
-                     axis.ticks = element_blank(),
-                     panel.background = element_blank()) +
-               labs(x = "Poster ID", y = "Total Votes")
-             )
-    }
-  }
-}
-plotlyData <- function(category){
   if(category == "GSM"){
     if(exists("GSM") & exists("posters.df")){
       suppressMessages(
@@ -147,8 +194,8 @@ plotlyData <- function(category){
                         y = n,
                         fill = NAME,
                         label = n,
-                        "poster.author" = as.character(author),
-                        "poster.title" = as.character(title))) + 
+                        "poster.author" = author,
+                        "poster.title" = title)) + 
               geom_text(vjust = 0) +
               geom_bar(stat="identity") + 
               scale_fill_brewer(palette = paste(getpalette(category))) +

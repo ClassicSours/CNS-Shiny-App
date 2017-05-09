@@ -7,7 +7,6 @@ shinyServer(function(input, output, session) {
     info <- posterInfo(input$posterid)
     req(input$total)
     if(info[1] != "" & info[2] != ""){
-      # if(length(input$total) == 1){
         vote <- data.frame(as.character(info[1]),
                            as.character(info[2]),
                            as.character(input$judgeid),
@@ -18,7 +17,6 @@ shinyServer(function(input, output, session) {
           vote$total <- 0
         saveData(vote)  
         
-      # }
     }
     updateTextInput(session, "posterid", value = "")
     updateNumericInput(session, "total", value = "")
@@ -65,6 +63,11 @@ shinyServer(function(input, output, session) {
     plotData("GF")
   })
   
+  output$plotlyG <- renderPlotly({
+    autoInvalidate()
+    plotlyData("GF")
+  })
+  
   output$winnersG <- renderUI({
     autoInvalidate()
     winners <- getWinners("GF")
@@ -77,6 +80,11 @@ shinyServer(function(input, output, session) {
   output$plotU <- renderPlot({
     autoInvalidate()
     plotData("UF")
+  })
+  
+  output$plotlyU <- renderPlotly({
+    autoInvalidate()
+    plotlyData("UF")
   })
   
   output$winnersU <- renderUI({

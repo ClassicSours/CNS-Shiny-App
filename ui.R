@@ -53,16 +53,18 @@ shinyUI(fluidPage(
              column(12,
                column(4,
                  h3("Graduate Posters", align = "center"),
-                 plotOutput("plotG")
+                 # plotOutput("plotG"),
+                 plotlyOutput("plotlyG")
                ),
                column(4,
                  h3("Undergraduate Posters", align = "center"),
-                 plotOutput("plotU")
+                 # plotOutput("plotU"),
+                 plotlyOutput("plotlyU")
                ),
                column(4,
                  h3("Student Posters", align = "center"),
-                 plotOutput("plotS")
-                 #plotlyOutput("plotlyS")
+                 # plotOutput("plotS")
+                 plotlyOutput("plotlyS")
                )
              )
            ),
