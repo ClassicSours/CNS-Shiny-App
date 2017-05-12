@@ -1,8 +1,12 @@
 # Define UI for application that draws a histogram
 suppressMessages(library(plotly))
 
+
 shinyUI(fluidPage(
-  titlePanel("Shiny Judging App"),
+  tags$style(type="text/css",
+             ".recalculating { opacity: 1.0; }"
+  ),
+  titlePanel("Shiny Posters"),
     sidebarLayout(position = "left",
     sidebarPanel(
       tabsetPanel(

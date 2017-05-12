@@ -1,6 +1,7 @@
 ## devtools::install_github('rstudio/DT')
 source("helper.R")
 
+
 shinyServer(function(input, output, session) {
 
   observeEvent(input$submitvote, {
@@ -61,7 +62,7 @@ shinyServer(function(input, output, session) {
   output$plotG <- renderPlot({
     autoInvalidate()
     plotData("GF")
-  })
+  }, bg="transparent")
   
   output$plotlyG <- renderPlotly({
     autoInvalidate()
